@@ -1,0 +1,28 @@
+
+> test-vercel@0.1.0 build
+> next build
+
+??Next.js 16.1.3 (Turbopack)
+- Environments: .env.local
+
+??The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+??Compiled successfully in 5.3s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/3) ...
+??Generating static pages using 15 workers (3/3) in 1246.5ms
+  Finalizing page optimization ...
+
+Route (app)
+??? /
+????/_not-found
+??? /dashboard
+??? /login
+
+
+? Proxy (Middleware)
+
+?? (Static)   prerendered as static content
+?  (Dynamic)  server-rendered on demand
+

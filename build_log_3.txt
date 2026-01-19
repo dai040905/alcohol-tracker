@@ -1,0 +1,25 @@
+
+> test-vercel@0.1.0 build
+> next build
+
+??Next.js 16.1.3 (Turbopack)
+- Environments: .env.local
+
+??The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+??Compiled successfully in 5.1s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/6) ...
+  Generating static pages using 15 workers (1/6) 
+Error occurred prerendering page "/dashboard". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: Invalid supabaseUrl: Must be a valid HTTP or HTTPS URL.
+    at <unknown> (D:\Dai\Study\antigravity\test-vercel\.next\server\chunks\ssr\_f1757887._.js:37:43018)
+    at new cj (D:\Dai\Study\antigravity\test-vercel\.next\server\chunks\ssr\_f1757887._.js:37:43200)
+    at <unknown> (D:\Dai\Study\antigravity\test-vercel\.next\server\chunks\ssr\_f1757887._.js:59:4312)
+    at cx (D:\Dai\Study\antigravity\test-vercel\.next\server\chunks\ssr\_f1757887._.js:59:4544)
+    at v (D:\Dai\Study\antigravity\test-vercel\.next\server\chunks\ssr\[root-of-the-server]__f8fd98cb._.js:1:7967) {
+  digest: '950486289'
+}
+Export encountered an error on /dashboard/page: /dashboard, exiting the build.
+漼?Next.js build worker exited with code: 1 and signal: null
