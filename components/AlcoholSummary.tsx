@@ -116,7 +116,7 @@ export default function AlcoholSummary({
 
                 <div className="flex flex-col md:flex-row items-center justify-around gap-8 py-4">
                     <div className="text-center">
-                        <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">今日攝取總量</h3>
+                        <h2 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">今日攝取總量</h2>
                         <p className="text-4xl font-black text-white font-mono">
                             {totalPureCc.toFixed(1)} <span className="text-sm font-normal text-slate-500">cc</span>
                         </p>
@@ -126,10 +126,10 @@ export default function AlcoholSummary({
 
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-2 mb-2">
-                            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest">當前血液濃度 (BAC)</h3>
+                            <h2 className="text-slate-500 text-xs font-bold uppercase tracking-widest">當前血液濃度 (BAC)</h2>
                             <Clock className="w-4 h-4 text-slate-500 animate-pulse" />
                         </div>
-                        <p className={`text-5xl font-black font-mono transition-colors duration-500 ${status.color}`}>
+                        <p className={`text-4xl font-black font-mono transition-colors duration-500 ${status.color}`}>
                             {bac.toFixed(3)}<span className="text-sm font-bold opacity-70 ml-1">%</span>
                         </p>
                     </div>
