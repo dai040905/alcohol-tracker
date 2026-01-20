@@ -156,7 +156,7 @@ export default function Dashboard() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                     >
-                        <AlcoholSummary totalPureCc={totalPureCc} profile={profile} />
+                        <AlcoholSummary drinks={drinks} profile={profile} />
                     </motion.div>
 
                     {isToday && (
