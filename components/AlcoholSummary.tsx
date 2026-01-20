@@ -27,34 +27,49 @@ export default function AlcoholSummary({
     const [totalPureCc, setTotalPureCc] = useState(0)
 
     const calculateBAC = useCallback(() => {
-        if (!profile) {
+        if (!profile || drinks.length === 0) {
             const totalCc = drinks.reduce((acc, d) => acc + (d.volume_cc * (d.abv / 100)), 0)
             return { currentBac: 0, totalCc }
         }
 
         const rFactor = profile.gender === 'female' ? 0.55 : 0.68
         const weightGrams = profile.weight_kg * 1000
-        const eliminationRatePerHour = 0.015
+        const eliminationRatePerHour = 0.015 // β coefficient
         const now = new Date().getTime()
 
-        let totalBacContribution = 0
+        // 1. Sort drinks by time ascending
+        const sortedDrinks = [...drinks].sort((a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        )
+
+        let runningBac = 0
+        let lastEventTime = new Date(sortedDrinks[0].created_at).getTime()
         let totalCc = 0
 
-        drinks.forEach(drink => {
+        // 2. Iterate through drinks and metabolize between them
+        sortedDrinks.forEach((drink) => {
             const pureCc = drink.volume_cc * (drink.abv / 100)
             totalCc += pureCc
 
             const alcoholGrams = pureCc * 0.789
-            const initialBacContribution = (alcoholGrams / (weightGrams * rFactor)) * 100
+            const drinkContribution = (alcoholGrams / (weightGrams * rFactor)) * 100
 
-            const drinkTime = new Date(drink.created_at).getTime()
-            const hoursElapsed = (now - drinkTime) / (1000 * 60 * 60)
+            const currentTime = new Date(drink.created_at).getTime()
+            const hoursPassedSinceLastEvent = (currentTime - lastEventTime) / (1000 * 60 * 60)
 
-            const currentContribution = Math.max(0, initialBacContribution - (eliminationRatePerHour * hoursElapsed))
-            totalBacContribution += currentContribution
+            // Subtract metabolism since last drink
+            runningBac = Math.max(0, runningBac - (eliminationRatePerHour * hoursPassedSinceLastEvent))
+
+            // Add current drink
+            runningBac += drinkContribution
+            lastEventTime = currentTime
         })
 
-        return { currentBac: totalBacContribution, totalCc }
+        // 3. Final metabolism from last drink until "Now"
+        const hoursPassedUntilNow = (now - lastEventTime) / (1000 * 60 * 60)
+        runningBac = Math.max(0, runningBac - (eliminationRatePerHour * hoursPassedUntilNow))
+
+        return { currentBac: runningBac, totalCc }
     }, [drinks, profile])
 
     useEffect(() => {
@@ -99,23 +114,23 @@ export default function AlcoholSummary({
                     </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center justify-around gap-6 py-2">
+                <div className="flex flex-col md:flex-row items-center justify-around gap-8 py-4">
                     <div className="text-center">
-                        <h3 className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">今日攝取總量</h3>
-                        <p className="text-3xl font-black text-white font-mono">
-                            {totalPureCc.toFixed(1)} <span className="text-xs font-normal text-slate-500">cc</span>
+                        <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">今日攝取總量</h3>
+                        <p className="text-4xl font-black text-white font-mono">
+                            {totalPureCc.toFixed(1)} <span className="text-sm font-normal text-slate-500">cc</span>
                         </p>
                     </div>
 
-                    <div className="h-12 w-px bg-white/5 hidden md:block"></div>
+                    <div className="h-16 w-px bg-white/10 hidden md:block"></div>
 
                     <div className="text-center">
-                        <div className="flex items-center justify-center gap-1 mb-1">
-                            <h3 className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">當前血液濃度 (BAC)</h3>
-                            <Clock className="w-3 h-3 text-slate-500 animate-pulse" />
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest">當前血液濃度 (BAC)</h3>
+                            <Clock className="w-4 h-4 text-slate-500 animate-pulse" />
                         </div>
-                        <p className={`text-4xl font-black font-mono transition-colors duration-500 ${status.color}`}>
-                            {bac.toFixed(3)}<span className="text-xs font-bold opacity-70 ml-1">%</span>
+                        <p className={`text-5xl font-black font-mono transition-colors duration-500 ${status.color}`}>
+                            {bac.toFixed(3)}<span className="text-sm font-bold opacity-70 ml-1">%</span>
                         </p>
                     </div>
                 </div>
@@ -124,17 +139,17 @@ export default function AlcoholSummary({
                     key={status.label}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`mt-6 p-4 rounded-xl border ${status.bg} ${status.border} text-left`}
+                    className={`mt-6 p-5 rounded-xl border ${status.bg} ${status.border} text-left`}
                 >
-                    <div className="flex items-center justify-between mb-1">
-                        <p className={`text-xs font-bold ${status.color}`}>狀態：{status.label}</p>
+                    <div className="flex items-center justify-between mb-2">
+                        <p className={`text-sm font-bold ${status.color}`}>狀態：{status.label}</p>
                         {bac > 0 && (
-                            <p className="text-[9px] text-slate-500 flex items-center gap-1">
-                                <Clock className="w-2 h-2" /> 代謝計算中
+                            <p className="text-xs text-slate-500 flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> 代謝計算中
                             </p>
                         )}
                     </div>
-                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                    <p className="text-slate-200 text-xs md:text-sm leading-relaxed font-medium">
                         {profile ? status.desc : '⚠️ 請點擊圖示設定體重，以啟用代謝追蹤功能。'}
                     </p>
                 </motion.div>
