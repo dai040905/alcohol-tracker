@@ -6,16 +6,34 @@ import { useRouter } from 'next/navigation'
 import AlcoholSummary from '@/components/AlcoholSummary'
 import DrinkForm from '@/components/DrinkForm'
 import DrinkList from '@/components/DrinkList'
-import { LogOut, User as UserIcon, Loader2, Calendar } from 'lucide-react'
+import { LogOut, User as UserIcon, Loader2, Calendar, Settings } from 'lucide-react'
 import { motion } from 'framer-motion'
+import ProfileModal from '@/components/ProfileModal'
 
 export default function Dashboard() {
     const [drinks, setDrinks] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState<any>(null)
+    const [profile, setProfile] = useState<any>(null)
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
     const supabase = createClient()
     const router = useRouter()
+
+    const fetchProfile = useCallback(async (userId: string) => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single()
+
+        if (!error && data) {
+            setProfile(data)
+        } else if (error && error.code === 'PGRST116') {
+            // profile not found, open modal
+            setIsProfileModalOpen(true)
+        }
+    }, [supabase])
 
     const fetchDrinks = useCallback(async () => {
         const startOfDay = new Date(selectedDate)
@@ -44,10 +62,11 @@ export default function Dashboard() {
                 return
             }
             setUser(user)
+            await fetchProfile(user.id)
             setLoading(false)
         }
         checkUser()
-    }, [supabase, router])
+    }, [supabase, router, fetchProfile])
 
     useEffect(() => {
         if (user) {
@@ -83,11 +102,22 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen p-4 md:p-8 max-w-4xl mx-auto space-y-8">
+            <ProfileModal
+                isOpen={isProfileModalOpen}
+                onClose={() => setIsProfileModalOpen(false)}
+                initialData={profile}
+                onSave={() => user && fetchProfile(user.id)}
+            />
+
             {/* Header */}
             <header className="flex items-center justify-between glass p-4 rounded-2xl border border-white/5">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                        <UserIcon className="w-5 h-5 text-primary" />
+                <div
+                    className="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-1 rounded-xl transition-all"
+                    onClick={() => setIsProfileModalOpen(true)}
+                >
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center group relative">
+                        <UserIcon className="w-5 h-5 text-primary group-hover:opacity-0" />
+                        <Settings className="w-5 h-5 text-primary absolute opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
                         <p className="text-xs text-slate-500 font-medium">目前的飲酒者</p>
@@ -126,7 +156,7 @@ export default function Dashboard() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                     >
-                        <AlcoholSummary totalPureCc={totalPureCc} />
+                        <AlcoholSummary totalPureCc={totalPureCc} profile={profile} />
                     </motion.div>
 
                     {isToday && (
