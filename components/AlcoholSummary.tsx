@@ -5,7 +5,7 @@ import { Droplets } from 'lucide-react'
 
 export default function AlcoholSummary({ totalPureCc }: { totalPureCc: number }) {
     // Assume a "limit" or goal for safer drinking, e.g., 20cc pure alcohol
-    const limit = 20
+    const limit = 100
     const percentage = Math.min((totalPureCc / limit) * 100, 100)
 
     return (
