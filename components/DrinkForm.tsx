@@ -34,8 +34,11 @@ export default function DrinkForm({ onDrinkAdded }: { onDrinkAdded: () => void }
 
         if (!error) {
             onDrinkAdded()
-            // reset form partially
-            setVolume('330')
+            // reset volume based on current type
+            const currentType = DRINK_TYPES.find(dt => dt.label === type)
+            if (currentType) {
+                setVolume(currentType.defaultVolume.toString())
+            }
         }
         setLoading(false)
     }

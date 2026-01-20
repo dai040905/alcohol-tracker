@@ -58,13 +58,13 @@ export default function DrinkList({
                                 </div>
                                 <div>
                                     <p className="text-slate-200 font-bold">{drink.alcohol_type}</p>
-                                    <p className="text-slate-500 text-xs">{drink.volume_cc}cc · {drink.abv}%</p>
+                                    <p className="text-slate-300 text-xs">{drink.volume_cc}cc · {drink.abv}%</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="text-right">
                                     <p className="text-primary font-mono font-bold">+{pureCc} cc</p>
-                                    <p className="text-slate-600 text-[10px] mt-1">{time}</p>
+                                    <p className="text-slate-400 text-[10px] mt-1 font-medium">{time}</p>
                                 </div>
                                 <button
                                     onClick={() => {
@@ -72,7 +72,7 @@ export default function DrinkList({
                                             onDelete(drink.id)
                                         }
                                     }}
-                                    className="p-2 bg-red-500/10 text-red-400 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/20"
+                                    className="p-2 bg-red-500/10 text-red-400 border border-red-500/10 rounded-lg opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all hover:bg-red-500/20 active:scale-95"
                                     title="刪除紀錄"
                                 >
                                     <Trash2 className="w-4 h-4" />
