@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Beer, Wine, GlassWater, Clock } from 'lucide-react'
+import { Beer, Wine, GlassWater, Clock, Trash2 } from 'lucide-react'
 
 interface Drink {
     id: string
@@ -17,19 +17,27 @@ const ICON_MAP: Record<string, any> = {
     '烈酒': GlassWater,
 }
 
-export default function DrinkList({ drinks }: { drinks: Drink[] }) {
+export default function DrinkList({
+    drinks,
+    onDelete,
+    title = "今日飲酒紀錄"
+}: {
+    drinks: Drink[],
+    onDelete: (id: string) => void,
+    title?: string
+}) {
     if (drinks.length === 0) {
         return (
             <div className="glass-card flex flex-col items-center justify-center p-12 text-slate-500">
                 <Clock className="w-12 h-12 mb-4 opacity-20" />
-                <p>今日尚無紀錄</p>
+                <p>尚無紀錄</p>
             </div>
         )
     }
 
     return (
         <div className="space-y-4">
-            <h3 className="text-lg font-bold text-slate-300 px-2">今日飲酒紀錄</h3>
+            <h3 className="text-lg font-bold text-slate-300 px-2">{title}</h3>
             <div className="space-y-3">
                 {drinks.map((drink, index) => {
                     const Icon = ICON_MAP[drink.alcohol_type] || Beer
@@ -42,7 +50,7 @@ export default function DrinkList({ drinks }: { drinks: Drink[] }) {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.1 }}
                             key={drink.id}
-                            className="glass p-4 rounded-xl flex items-center justify-between"
+                            className="glass p-4 rounded-xl flex items-center justify-between group"
                         >
                             <div className="flex items-center gap-4">
                                 <div className="p-2 bg-white/5 rounded-lg border border-white/10">
@@ -53,9 +61,22 @@ export default function DrinkList({ drinks }: { drinks: Drink[] }) {
                                     <p className="text-slate-500 text-xs">{drink.volume_cc}cc · {drink.abv}%</p>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-primary font-mono font-bold">+{pureCc} cc</p>
-                                <p className="text-slate-600 text-[10px] mt-1">{time}</p>
+                            <div className="flex items-center gap-4">
+                                <div className="text-right">
+                                    <p className="text-primary font-mono font-bold">+{pureCc} cc</p>
+                                    <p className="text-slate-600 text-[10px] mt-1">{time}</p>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        if (confirm('確定要刪除此紀錄嗎？')) {
+                                            onDelete(drink.id)
+                                        }
+                                    }}
+                                    className="p-2 bg-red-500/10 text-red-400 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/20"
+                                    title="刪除紀錄"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
                             </div>
                         </motion.div>
                     )

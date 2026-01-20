@@ -6,9 +6,9 @@ import { Beer, Wine, GlassWater, Plus, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const DRINK_TYPES = [
-    { label: '啤酒', icon: Beer, defaultAbv: 5 },
-    { label: '葡萄酒', icon: Wine, defaultAbv: 12 },
-    { label: '烈酒', icon: GlassWater, defaultAbv: 40 },
+    { label: '啤酒', icon: Beer, defaultAbv: 5, defaultVolume: 330 },
+    { label: '葡萄酒', icon: Wine, defaultAbv: 12, defaultVolume: 125 },
+    { label: '烈酒', icon: GlassWater, defaultAbv: 40, defaultVolume: 30 },
 ]
 
 export default function DrinkForm({ onDrinkAdded }: { onDrinkAdded: () => void }) {
@@ -52,10 +52,11 @@ export default function DrinkForm({ onDrinkAdded }: { onDrinkAdded: () => void }
                         onClick={() => {
                             setType(dt.label)
                             setAbv(dt.defaultAbv.toString())
+                            setVolume(dt.defaultVolume.toString())
                         }}
                         className={`flex flex-col items-center p-3 rounded-xl border transition-all ${type === dt.label
-                                ? 'bg-primary/20 border-primary text-primary'
-                                : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'
+                            ? 'bg-primary/20 border-primary text-primary'
+                            : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'
                             }`}
                     >
                         <dt.icon className="w-6 h-6 mb-2" />
