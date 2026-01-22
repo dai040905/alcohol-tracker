@@ -63,8 +63,8 @@ export default function LoginPage() {
                 className="glass-card w-full max-w-md"
             >
                 <div className="flex flex-col items-center mb-8">
-                    <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mb-4">
-                        <Wine className="w-8 h-8 text-primary" />
+                    <div className="w-20 h-20 bg-primary/20 rounded-3xl flex items-center justify-center mb-4 overflow-hidden shadow-2xl shadow-primary/20 border border-white/10 p-2">
+                        <img src="/images/logo.png" alt="Alcohol Tracker Logo" className="w-full h-full object-contain" />
                     </div>
                     <h1 className="text-3xl font-bold text-gradient">酒精追蹤器</h1>
                     <p className="text-slate-400 mt-2 text-center">
