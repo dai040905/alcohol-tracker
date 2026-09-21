@@ -66,7 +66,7 @@ export default function LoginPage() {
                     <div className="w-20 h-20 bg-primary/20 rounded-3xl flex items-center justify-center mb-4 overflow-hidden shadow-2xl shadow-primary/20 border border-white/10 p-2">
                         <img src="/images/logo.png" alt="Alcohol Tracker Logo" className="w-full h-full object-contain" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gradient">酒精追蹤器</h1>
+                    <h1 className="text-3xl font-bold text-gradient">酒精追蹤器(DAI)</h1>
                     <p className="text-slate-400 mt-2 text-center">
                         {isResetPassword
                             ? '輸入 Email 以重設密碼'
