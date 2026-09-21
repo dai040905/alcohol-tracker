@@ -11,17 +11,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Supabase to Prevent Inactivity Pause
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "::error::SUPABASE_URL is empty! Please add it to GitHub Settings > Secrets and variables > Actions > Secrets"
+            exit 1
+          fi
+
+          if [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::SUPABASE_ANON_KEY is empty! Please add it to GitHub Settings > Secrets and variables > Actions > Secrets"
+            exit 1
+          fi
+
+          # 移除結尾斜線
+          CLEAN_URL="${SUPABASE_URL%/}"
+          TARGET_URL="${CLEAN_URL}/rest/v1/"
+          echo "Pinging: $TARGET_URL"
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X GET "$TARGET_URL" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
           
-          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
           echo "Supabase Response Status: $HTTP_STATUS"
 
           if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 500 ]; then
-            echo "Successfully pinged Supabase!"
+            echo "Successfully pinged Supabase! Project is active."
           else
-            echo "Warning: Ping returned status $HTTP_STATUS"
+            echo "::error::Ping failed with HTTP status $HTTP_STATUS"
             exit 1
           fi
